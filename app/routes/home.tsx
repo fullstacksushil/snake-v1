@@ -6,10 +6,10 @@ import {
   advance,
   createGame,
   directionForKey,
-  isOver,
   isRestartKey,
   queueDirection,
   restart,
+  waitsForRestart,
   type Cell,
   type Game,
 } from "~/modules/game";
@@ -26,7 +26,7 @@ export default function Home() {
   // mount: the server and the client would place it on different cells.
   const [game, setGame] = useState<Game | null>(null);
   useEffect(() => setGame(createGame(Math.random)), []);
-  const over = game !== null && isOver(game);
+  const waitingForRestart = game !== null && waitsForRestart(game);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -43,7 +43,7 @@ export default function Home() {
   // Enter and Space restart only at game over or a win. Cancelling their
   // default stops a focused Restart button from also getting a click or scroll.
   useEffect(() => {
-    if (!over) return;
+    if (!waitingForRestart) return;
     function onKeyDown(event: KeyboardEvent) {
       if (!isRestartKey(event.key)) return;
       event.preventDefault();
@@ -51,7 +51,7 @@ export default function Home() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [over]);
+  }, [waitingForRestart]);
 
   const playing = game?.status === "playing";
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function Home() {
         role="status"
       >
         {game?.status === "ready" && <p>Press an arrow key to start</p>}
-        {over && (
+        {waitingForRestart && (
           <>
             <p className="font-semibold">
               {game.status === "win" ? "You win!" : "Game over."} Final

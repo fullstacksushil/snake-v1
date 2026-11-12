@@ -105,7 +105,7 @@ export function placeFood(snake: readonly Cell[], random: Random): Cell | null {
  * on the last tick, or when a turn is already queued for this tick (first wins).
  */
 export function queueDirection(game: Game, direction: Direction): Game {
-  if (isOver(game)) return game;
+  if (waitsForRestart(game)) return game;
   if (game.queuedDirection !== null) return game;
   if (direction === OPPOSITE[game.direction]) return game;
 
@@ -167,11 +167,11 @@ export function isRestartKey(key: string): boolean {
 
 /** A fresh game after game over or a win. Does nothing during `ready` or `playing`. */
 export function restart(game: Game, random: Random): Game {
-  return isOver(game) ? createGame(random) : game;
+  return waitsForRestart(game) ? createGame(random) : game;
 }
 
-/** Whether the game has ended: `game over` or `win`. */
-export function isOver(game: Game): boolean {
+/** Whether the game waits for a restart: its status is `game over` or `win`. */
+export function waitsForRestart(game: Game): boolean {
   return game.status === "game over" || game.status === "win";
 }
 
