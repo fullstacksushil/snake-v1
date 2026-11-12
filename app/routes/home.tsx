@@ -22,7 +22,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const [game, setGame] = useState(createGame);
-  const over = game.status === "game over";
+  const gameOver = game.status === "game over";
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -39,7 +39,7 @@ export default function Home() {
   // Enter and Space restart only at game over. Cancelling their default
   // stops a focused Restart button from also getting a click or scroll.
   useEffect(() => {
-    if (!over) return;
+    if (!gameOver) return;
     function onKeyDown(event: KeyboardEvent) {
       if (!isRestartKey(event.key)) return;
       event.preventDefault();
@@ -47,7 +47,7 @@ export default function Home() {
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [over]);
+  }, [gameOver]);
 
   const playing = game.status === "playing";
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function Home() {
         role="status"
       >
         {game.status === "ready" && <p>Press an arrow key to start</p>}
-        {over && (
+        {gameOver && (
           <>
             <p className="font-semibold">Game over</p>
             <button
