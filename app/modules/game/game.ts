@@ -100,15 +100,18 @@ export function advance(game: Game): Game {
   const step = STEP[direction];
   const newHead = { x: head.x + step.x, y: head.y + step.y };
   // The tail leaves its cell on this tick, so the head may move into it.
-  const body = game.snake.slice(0, -1);
+  const segmentsWithoutTail = game.snake.slice(0, -1);
 
-  if (!isOnBoard(newHead) || body.some((cell) => sameCell(cell, newHead))) {
+  if (
+    !isOnBoard(newHead) ||
+    segmentsWithoutTail.some((cell) => sameCell(cell, newHead))
+  ) {
     return { ...game, status: "game over", queuedDirection: null };
   }
 
   return {
     ...game,
-    snake: [newHead, ...body],
+    snake: [newHead, ...segmentsWithoutTail],
     direction,
     queuedDirection: null,
   };
