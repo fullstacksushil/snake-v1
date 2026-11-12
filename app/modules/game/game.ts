@@ -38,7 +38,7 @@ const OPPOSITE: Record<Direction, Direction> = {
   right: "left",
 };
 
-const ARROW_KEYS: Record<string, Direction> = {
+const ARROW_KEYS: Readonly<Record<string, Direction>> = {
   ArrowUp: "up",
   ArrowDown: "down",
   ArrowLeft: "left",
@@ -47,7 +47,7 @@ const ARROW_KEYS: Record<string, Direction> = {
 
 /** Maps a `KeyboardEvent.key` to a direction, or `null` if it is not an arrow key. */
 export function directionForKey(key: string): Direction | null {
-  return ARROW_KEYS[key] ?? null;
+  return Object.hasOwn(ARROW_KEYS, key) ? ARROW_KEYS[key] : null;
 }
 
 /** A new game: 3 segments in the centre, facing right, status `ready`. */

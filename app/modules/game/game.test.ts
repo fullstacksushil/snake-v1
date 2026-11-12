@@ -139,4 +139,9 @@ describe("directionForKey", () => {
     expect(directionForKey("ArrowRight")).toBe("right");
     expect(directionForKey("a")).toBeNull();
   });
+
+  it("ignores key names that match built-in object properties", () => {
+    expect(directionForKey("toString")).toBeNull();
+    expect(directionForKey("constructor")).toBeNull();
+  });
 });
