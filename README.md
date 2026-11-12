@@ -65,4 +65,4 @@ docker run -p 3000:3000 snake
 - [`GLOSSARY.md`](GLOSSARY.md): the names to use for game concepts in code, UI text and tests.
 - [`CODING_STANDARDS.md`](CODING_STANDARDS.md): review rules that no check enforces.
 
-This repository is worked on by a software factory of agents. Labelling a GitHub issue `agent:explore` or `agent:implement`, or a pull request `agent:review`, starts an agent run. The runs and the `sf` CLI that drives them live outside this repository. A human merges every pull request. [`AGENTS.md`](AGENTS.md) describes the flow.
+This repository is worked on by a software factory of agents. Labelling a GitHub issue `agent:explore` or `agent:implement`, or a pull request `agent:review`, starts an agent run. Each run's script and prompt live in `.sandcastle/agent-workflows/`. The label triggers and the `sf` CLI that drives the flow live outside this repository. A human merges every pull request. [`AGENTS.md`](AGENTS.md) describes the flow.
