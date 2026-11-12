@@ -6,7 +6,9 @@ import {
   advance,
   createGame,
   directionForKey,
+  isRestartKey,
   queueDirection,
+  restart,
   type Cell,
   type Game,
 } from "~/modules/game";
@@ -20,17 +22,32 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const [game, setGame] = useState(createGame);
+  const over = game.status === "game over";
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       const direction = directionForKey(event.key);
-      if (direction === null) return;
-      event.preventDefault();
-      setGame((g) => queueDirection(g, direction));
+      if (direction !== null) {
+        event.preventDefault();
+        setGame((g) => queueDirection(g, direction));
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
+
+  // Enter and Space restart only at game over. Cancelling their default
+  // stops a focused Restart button from also getting a click or scroll.
+  useEffect(() => {
+    if (!over) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (!isRestartKey(event.key)) return;
+      event.preventDefault();
+      setGame(restart);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [over]);
 
   const playing = game.status === "playing";
   useEffect(() => {
@@ -42,9 +59,24 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
       <Board game={game} />
-      <p className="h-6 text-gray-700 dark:text-gray-300" role="status">
-        {game.status === "ready" ? "Press an arrow key to start" : ""}
-      </p>
+      <div
+        className="flex h-10 items-center gap-4 text-gray-700 dark:text-gray-300"
+        role="status"
+      >
+        {game.status === "ready" && <p>Press an arrow key to start</p>}
+        {over && (
+          <>
+            <p className="font-semibold">Game over</p>
+            <button
+              type="button"
+              onClick={() => setGame(restart)}
+              className="rounded bg-emerald-700 px-3 py-1 text-white hover:bg-emerald-800 dark:bg-emerald-500 dark:text-gray-950 dark:hover:bg-emerald-400"
+            >
+              Restart
+            </button>
+          </>
+        )}
+      </div>
     </main>
   );
 }
