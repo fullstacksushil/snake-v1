@@ -28,6 +28,7 @@ npm install
 | --- | --- |
 | `npm run dev` | Starts the development server with hot reload at `http://localhost:5173`. |
 | `npm run build` | Builds the app for production into `build/`. |
+| `npm run build:pages` | Builds the Pages build: the game as static files under `/snake-v1/`, into `build/client/`. |
 | `npm run start` | Serves the production build from `build/server/index.js`. |
 | `npm run typecheck` | Generates the React Router route types, then runs `tsc`. |
 | `npm run test` | Runs the Vitest tests once. |
@@ -39,6 +40,7 @@ CI runs `npm run check` and `npm run build` on every pull request.
 
 ```text
 app/
+├── modules/build/     # build settings: the server build or the Pages build
 ├── modules/game/      # the game rules
 │   ├── game.ts        # board, snake, ticks, collisions, food, score, status
 │   ├── game.test.ts
@@ -50,6 +52,12 @@ app/
 ```
 
 The game rules live in `app/modules/game` and the route only calls them. Routes and tests import through the public API in `index.ts` (`~/modules/game`), never from `game.ts` directly.
+
+## GitHub Pages
+
+`npm run build:pages` builds the game as a static site for GitHub Pages, which hosts this repository at `/snake-v1/`. It sets `BASE_PATH=/snake-v1/`; with any `BASE_PATH` set, the build drops server rendering and serves every asset under that path. To serve the result locally, copy `build/client/` into a `snake-v1/` folder and serve that folder's parent.
+
+Without `BASE_PATH`, `npm run build`, `npm run dev`, `npm run start` and the Docker image serve the game at `/` as before.
 
 ## Docker
 
