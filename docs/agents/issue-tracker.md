@@ -27,6 +27,7 @@ Run `gh issue view <number> --comments`.
 - Add native blocking edges: `gh api --method POST repos/<owner>/<repo>/issues/<ticket>/dependencies/blocked_by -F issue_id=<blocker-db-id>`.
 - The db id is `gh api repos/<owner>/<repo>/issues/<n> --jq .id`. It is not the `#number`.
 - **Always keep the `## Blocked by` section in the body too**, with one `- #<n>` line per blocker, or `None`. The `sf` CLI reads the frontier from it.
+- The factory's agents read the ticket, never its parent spec. Copy every Implementation Decision from the spec that the ticket touches into a `## Decisions from the spec` section, word for word.
 - Label each ticket `ready-for-agent`. Do not add `agent:*` labels: `sf` hands the frontier to the factory.
 
 ## Wayfinding operations
