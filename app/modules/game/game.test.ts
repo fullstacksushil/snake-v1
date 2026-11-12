@@ -8,6 +8,7 @@ import {
   placeFood,
   queueDirection,
   restart,
+  sameCell,
   type Cell,
   type Direction,
   type Game,
@@ -285,7 +286,7 @@ function boardPath(): Cell[] {
 }
 
 function onSnake(snake: readonly Cell[], cell: Cell | null): boolean {
-  return snake.some((s) => cell !== null && s.x === cell.x && s.y === cell.y);
+  return cell !== null && snake.some((s) => sameCell(s, cell));
 }
 
 describe("food", () => {

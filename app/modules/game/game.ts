@@ -182,10 +182,12 @@ function isOnBoard(cell: Cell): boolean {
   return cell.x >= 0 && cell.x < BOARD_SIZE && cell.y >= 0 && cell.y < BOARD_SIZE;
 }
 
-function sameCell(a: Cell, b: Cell): boolean {
+/** Whether two cells are the same square of the board. */
+export function sameCell(a: Cell, b: Cell): boolean {
   return a.x === b.x && a.y === b.y;
 }
 
-function cellKey(cell: Cell): string {
+/** A string that identifies a cell, for sets and React keys. */
+export function cellKey(cell: Cell): string {
   return `${cell.x},${cell.y}`;
 }

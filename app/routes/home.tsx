@@ -4,13 +4,14 @@ import {
   BOARD_SIZE,
   TICK_MS,
   advance,
+  cellKey,
   createGame,
   directionForKey,
   isRestartKey,
   queueDirection,
   restart,
+  sameCell,
   waitsForRestart,
-  type Cell,
   type Game,
 } from "~/modules/game";
 
@@ -105,11 +106,11 @@ function Board({ game }: { game: Game | null }) {
   for (let y = 0; y < BOARD_SIZE; y++) {
     for (let x = 0; x < BOARD_SIZE; x++) {
       const kind =
-        head?.x === x && head?.y === y
+        head && sameCell(head, { x, y })
           ? "head"
           : otherSegments.has(cellKey({ x, y }))
             ? "segment"
-            : food?.x === x && food?.y === y
+            : food && sameCell(food, { x, y })
               ? "food"
               : "empty";
       cells.push(
@@ -134,10 +135,6 @@ function Board({ game }: { game: Game | null }) {
       {cells}
     </div>
   );
-}
-
-function cellKey(cell: Cell): string {
-  return `${cell.x},${cell.y}`;
 }
 
 const CELL_CLASS = {
