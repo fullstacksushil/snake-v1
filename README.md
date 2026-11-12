@@ -57,6 +57,8 @@ The game rules live in `app/modules/game` and the route only calls them. Routes 
 
 `npm run build:pages` builds the game as a static site for GitHub Pages, which hosts this repository at `/snake-v1/`. It sets `BASE_PATH=/snake-v1/`; with any `BASE_PATH` set, the build drops server rendering and serves every asset under that path. To serve the result locally, copy `build/client/` into a `snake-v1/` folder and serve that folder's parent.
 
+The `pages` workflow (`.github/workflows/pages.yml`) runs `npm run build:pages` on every push to `main` and deploys `build/client/` to <https://fullstacksushil.github.io/snake-v1/>. The repository's Pages source must be set to "GitHub Actions".
+
 Without `BASE_PATH`, `npm run build`, `npm run dev`, `npm run start` and the Docker image serve the game at `/` as before.
 
 ## Docker
