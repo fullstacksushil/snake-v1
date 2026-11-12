@@ -36,7 +36,16 @@ A change of the snake's direction. At most one turn counts per tick, and a turn 
 One step of the game, every 150 ms, in which the snake moves one cell.
 
 **Status**:
-The game's phase. `ready`: waiting for the first arrow key. `playing`: the snake moves each tick.
+The game's phase. `ready`: waiting for the first arrow key. `playing`: the snake moves each tick. `game over`: a collision ended the game.
+
+**Collision**:
+The head moving past an edge of the board or into one of the snake's own segments. Moving into the cell the tail leaves on the same tick is not a collision.
+
+**Game over**:
+The status after a collision. The snake stops and the game waits for a restart.
+
+**Restart**:
+Starting a fresh game from game over, with the Restart button, Enter or Space. The new game is `ready`.
 
 **Game**:
 One round of Snake: the snake, its direction and the status.

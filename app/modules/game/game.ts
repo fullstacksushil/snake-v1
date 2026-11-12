@@ -1,5 +1,6 @@
 /**
- * Game rules for Snake: create a game, queue a direction, advance one tick.
+ * Game rules for Snake: create a game, queue a direction, advance one tick,
+ * end the game on a collision, restart.
  * Pure functions over immutable values. No React, DOM or timer code.
  */
 
@@ -11,8 +12,11 @@ export type Direction = "up" | "down" | "left" | "right";
 /** A square on the board. `x` grows to the right, `y` grows downwards. */
 export type Cell = { readonly x: number; readonly y: number };
 
-/** `ready`: waiting for the first arrow key. `playing`: moving each tick. */
-export type Status = "ready" | "playing";
+/**
+ * `ready`: waiting for the first arrow key. `playing`: moving each tick.
+ * `game over`: a collision ended the game; the snake no longer moves.
+ */
+export type Status = "ready" | "playing" | "game over";
 
 export type Game = {
   readonly status: Status;
@@ -71,6 +75,7 @@ export function createGame(): Game {
  * on the last tick, or when a turn is already queued for this tick (first wins).
  */
 export function queueDirection(game: Game, direction: Direction): Game {
+  if (game.status === "game over") return game;
   if (game.queuedDirection !== null) return game;
   if (direction === OPPOSITE[game.direction]) return game;
 
@@ -82,7 +87,11 @@ export function queueDirection(game: Game, direction: Direction): Game {
   return { ...game, queuedDirection: direction };
 }
 
-/** Moves the snake one cell in its direction. Does nothing while `ready`. */
+/**
+ * Moves the snake one cell in its direction. Does nothing unless `playing`.
+ * A collision (the head leaving the board or moving into one of the snake's
+ * own segments) ends the game and leaves the snake where it was.
+ */
 export function advance(game: Game): Game {
   if (game.status !== "playing") return game;
 
@@ -90,11 +99,40 @@ export function advance(game: Game): Game {
   const head = game.snake[0];
   const step = STEP[direction];
   const newHead = { x: head.x + step.x, y: head.y + step.y };
+  // The tail leaves its cell on this tick, so the head may move into it.
+  const segmentsWithoutTail = game.snake.slice(0, -1);
+
+  if (
+    !isOnBoard(newHead) ||
+    segmentsWithoutTail.some((cell) => sameCell(cell, newHead))
+  ) {
+    return { ...game, status: "game over", queuedDirection: null };
+  }
 
   return {
     ...game,
-    snake: [newHead, ...game.snake.slice(0, -1)],
+    snake: [newHead, ...segmentsWithoutTail],
     direction,
     queuedDirection: null,
   };
+}
+
+const RESTART_KEYS: ReadonlySet<string> = new Set(["Enter", " "]);
+
+/** Whether a `KeyboardEvent.key` restarts the game: Enter or Space. */
+export function isRestartKey(key: string): boolean {
+  return RESTART_KEYS.has(key);
+}
+
+/** A fresh game after game over. Does nothing during `ready` or `playing`. */
+export function restart(game: Game): Game {
+  return game.status === "game over" ? createGame() : game;
+}
+
+function isOnBoard(cell: Cell): boolean {
+  return cell.x >= 0 && cell.x < BOARD_SIZE && cell.y >= 0 && cell.y < BOARD_SIZE;
+}
+
+function sameCell(a: Cell, b: Cell): boolean {
+  return a.x === b.x && a.y === b.y;
 }
