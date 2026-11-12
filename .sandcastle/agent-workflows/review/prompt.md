@@ -7,8 +7,7 @@ Review it with the code-review skill, .agents/skills/code-review/SKILL.md:
 - spec: /tmp/review-spec.md
 - standards: CODING_STANDARDS.md
 
-A split that `scripts/check-file-tokens.js` forced is in scope for any
-ticket: tell both axes so. Check moved code with
+Check moved code with
 `git diff --color-moved=plain --color-moved-ws=allow-indentation-change origin/{{BASE_REF}}...HEAD`,
 which shows any line that changed on the way.
 

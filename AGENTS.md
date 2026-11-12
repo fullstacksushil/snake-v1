@@ -6,11 +6,11 @@ Run these in order before you report a change as complete:
 
 1. `npm run check`
 
-`npm run check` runs `typecheck` (React Router typegen and `tsc`), then `test` (Vitest). `npm run build` must pass too.
+`npm run check` runs `typecheck` (React Router typegen and `tsc`), then `test` (Vitest). `npm run build` must pass too. The pre-commit hook (`.githooks/pre-commit`, wired by `npm install`) runs `npm run check`, and CI runs both on every PR.
 
 ## Where things are
 
-- Domain terms: `GLOSSARY.md`. Use these terms in code, prompts and PRs. Do not invent new ones.
+- Domain terms: `GLOSSARY.md`. Name domain concepts (types, exported functions, UI text, test names) with its terms. Local variables follow the surrounding code. When a change introduces a new domain concept, add its term to `GLOSSARY.md` in the same PR.
 - Decisions the code cannot explain: `docs/adr/`.
 - Review rules that no check enforces: `CODING_STANDARDS.md`.
 - Task-specific guides: `docs/agents/`. Read the matching guide before you start that task.

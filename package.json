@@ -8,7 +8,8 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "test": "vitest run --passWithNoTests",
-    "check": "npm run typecheck && npm run test"
+    "check": "npm run typecheck && npm run test",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "@react-router/node": "^8.5.1",
