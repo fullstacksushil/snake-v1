@@ -7,6 +7,7 @@ import {
   createGame,
   directionForKey,
   queueDirection,
+  type Cell,
   type Game,
 } from "~/modules/game";
 
@@ -50,7 +51,7 @@ export default function Home() {
 
 function Board({ game }: { game: Game }) {
   const head = game.snake[0];
-  const body = new Set(game.snake.slice(1).map((c) => `${c.x},${c.y}`));
+  const otherSegments = new Set(game.snake.slice(1).map(cellKey));
 
   const cells = [];
   for (let y = 0; y < BOARD_SIZE; y++) {
@@ -58,11 +59,15 @@ function Board({ game }: { game: Game }) {
       const kind =
         head.x === x && head.y === y
           ? "head"
-          : body.has(`${x},${y}`)
+          : otherSegments.has(cellKey({ x, y }))
             ? "segment"
             : "empty";
       cells.push(
-        <div key={`${x},${y}`} data-cell={kind} className={CELL_CLASS[kind]} />,
+        <div
+          key={cellKey({ x, y })}
+          data-cell={kind}
+          className={CELL_CLASS[kind]}
+        />,
       );
     }
   }
@@ -79,6 +84,10 @@ function Board({ game }: { game: Game }) {
       {cells}
     </div>
   );
+}
+
+function cellKey(cell: Cell): string {
+  return `${cell.x},${cell.y}`;
 }
 
 const CELL_CLASS = {
