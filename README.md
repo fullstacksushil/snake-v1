@@ -44,6 +44,7 @@ app/
 │   ├── game.test.ts
 │   └── index.ts       # the module's public API: import from "~/modules/game"
 ├── routes/home.tsx    # the UI: draws the board, reads the keys, runs the ticks
+├── app.css            # Tailwind styles
 ├── root.tsx
 └── routes.ts
 ```
