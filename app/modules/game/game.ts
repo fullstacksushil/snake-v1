@@ -135,13 +135,16 @@ export function advance(game: Game, random: Random): Game {
   const eats = game.food !== null && sameCell(game.food, newHead);
   // The tail leaves its cell on this tick, so the head may move into it,
   // unless the snake eats: then the tail stays.
-  const blocked = eats ? game.snake : game.snake.slice(0, -1);
+  const segmentsThatStay = eats ? game.snake : game.snake.slice(0, -1);
 
-  if (!isOnBoard(newHead) || blocked.some((cell) => sameCell(cell, newHead))) {
+  if (
+    !isOnBoard(newHead) ||
+    segmentsThatStay.some((cell) => sameCell(cell, newHead))
+  ) {
     return { ...game, status: "game over", queuedDirection: null };
   }
 
-  const snake = [newHead, ...blocked];
+  const snake = [newHead, ...segmentsThatStay];
   if (!eats) {
     return { ...game, snake, direction, queuedDirection: null };
   }
