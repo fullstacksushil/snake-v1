@@ -1,87 +1,68 @@
-# Welcome to React Router!
+# Snake
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A browser Snake game for one player. Steer the snake around a 20×20 board. Each time the head reaches the food, the snake eats it, grows by one segment and the score goes up by one. A collision with a wall or with the snake's own body ends the game. If the snake fills the whole board, you win.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+[`GLOSSARY.md`](GLOSSARY.md) defines every game term: board, cell, snake, segment, head, direction, turn, tick, status, collision, food, score, win, game over and restart.
 
-## Features
+## Controls
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+| Key | Action |
+| --- | --- |
+| Arrow keys | Start the game, then steer the snake. A turn that would reverse the snake is ignored. |
+| Enter or Space | Restart after game over or a win. |
+| Restart button | Restart after game over or a win. |
 
-## Getting Started
+The snake moves one cell every tick (150 ms).
 
-### Installation
+## Commands
 
-Install the dependencies:
+Install the dependencies first:
 
 ```bash
 npm install
 ```
 
-### Development
+`npm install` also points git at `.githooks/`, so the pre-commit hook runs `npm run check` before every commit.
 
-Start the development server with HMR:
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Starts the development server with hot reload at `http://localhost:5173`. |
+| `npm run build` | Builds the app for production into `build/`. |
+| `npm run start` | Serves the production build from `build/server/index.js`. |
+| `npm run typecheck` | Generates the React Router route types, then runs `tsc`. |
+| `npm run test` | Runs the Vitest tests once. |
+| `npm run check` | Runs `typecheck`, then `test`. The pre-commit hook and CI run it. |
+
+CI runs `npm run check` and `npm run build` on every pull request.
+
+## Layout
+
+```text
+app/
+├── modules/game/      # the game rules
+│   ├── game.ts        # board, snake, ticks, collisions, food, score, status
+│   ├── game.test.ts
+│   └── index.ts       # the module's public API: import from "~/modules/game"
+├── routes/home.tsx    # the UI: draws the board, reads the keys, runs the ticks
+├── root.tsx
+└── routes.ts
+```
+
+The game rules live in `app/modules/game` and the route only calls them. Routes and tests import through the public API in `index.ts` (`~/modules/game`), never from `game.ts` directly.
+
+## Docker
+
+The `Dockerfile` builds the app and serves it on port 3000:
 
 ```bash
-npm run dev
+docker build -t snake .
+docker run -p 3000:3000 snake
 ```
 
-Your application will be available at `http://localhost:5173`.
+## Contributing
 
-## Building for Production
+- [`AGENTS.md`](AGENTS.md): the checks to run before a change is complete, and where things are.
+- [`GLOSSARY.md`](GLOSSARY.md): the names to use for game concepts in code, UI text and tests.
+- [`CODING_STANDARDS.md`](CODING_STANDARDS.md): review rules that no check enforces.
 
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+This repository is worked on by a software factory of agents. Labelling a GitHub issue `agent:explore` or `agent:implement`, or a pull request `agent:review`, starts an agent run. The runs and the `sf` CLI that drives them live outside this repository. A human merges every pull request. [`AGENTS.md`](AGENTS.md) describes the flow.
