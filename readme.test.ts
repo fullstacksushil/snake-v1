@@ -9,10 +9,10 @@ const readme = readFileSync(join(root, "README.md"), "utf8");
 const scripts: Record<string, string> = JSON.parse(
   readFileSync(join(root, "package.json"), "utf8"),
 ).scripts;
+const cited = [...readme.matchAll(/npm run ([\w:-]+)/g)].map((m) => m[1]);
 
 describe("README", () => {
   it("cites only npm scripts that package.json defines", () => {
-    const cited = [...readme.matchAll(/npm run ([\w:-]+)/g)].map((m) => m[1]);
     expect(cited.length).toBeGreaterThan(0);
     for (const name of cited) expect(scripts, name).toHaveProperty(name);
   });
@@ -20,7 +20,7 @@ describe("README", () => {
   it("documents every npm script a contributor runs", () => {
     const internal = new Set(["prepare"]);
     for (const name of Object.keys(scripts).filter((s) => !internal.has(s))) {
-      expect(readme, name).toContain(`npm run ${name}`);
+      expect(cited, name).toContain(name);
     }
   });
 
