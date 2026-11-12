@@ -92,14 +92,21 @@ describe("advance", () => {
 });
 
 /** Ticks until the status leaves `playing`, or `limit` ticks pass. */
-function runUntilOver(game: Game, limit = BOARD_SIZE * 2): Game {
+function runUntilGameOver(game: Game, limit = BOARD_SIZE * 2): Game {
   for (let i = 0; i < limit && game.status === "playing"; i++) game = advance(game);
   return game;
 }
 
-/** A playing game with a hand-built snake, head first. */
-function playingGame(snake: Game["snake"], direction: Direction): Game {
-  return { status: "playing", snake, direction, queuedDirection: null };
+/**
+ * A playing game with a hand-built snake, head first, that moved `direction`
+ * on the last tick and has `turn` queued for the next.
+ */
+function playingGame(
+  snake: Game["snake"],
+  direction: Direction,
+  turn: Direction,
+): Game {
+  return { status: "playing", snake, direction, queuedDirection: turn };
 }
 
 describe("collisions", () => {
@@ -107,19 +114,19 @@ describe("collisions", () => {
     ["right", { x: 19, y: 10 }],
     ["up", { x: 10, y: 0 }],
     ["down", { x: 10, y: 19 }],
-  ] as const)("ends the game at the %s wall", (direction, lastHead) => {
-    const game = runUntilOver(queueDirection(createGame(), direction));
+  ] as const)("ends the game at the %s edge", (direction, lastHead) => {
+    const game = runUntilGameOver(queueDirection(createGame(), direction));
     expect(game.status).toBe("game over");
     expect(game.snake[0]).toEqual(lastHead);
   });
 
-  it("ends the game at the left wall", () => {
-    const game = runUntilOver(play(createGame(), "up", "tick", "left"));
+  it("ends the game at the left edge", () => {
+    const game = runUntilGameOver(play(createGame(), "up", "tick", "left"));
     expect(game.status).toBe("game over");
     expect(game.snake[0]).toEqual({ x: 0, y: 9 });
   });
 
-  it("moves up to the last cell before the wall without a collision", () => {
+  it("moves up to the last cell before the edge without a collision", () => {
     let game = queueDirection(createGame(), "right");
     for (let i = 0; i < 9; i++) game = advance(game);
     expect(game.status).toBe("playing");
@@ -134,7 +141,7 @@ describe("collisions", () => {
       { x: 5, y: 6 },
       { x: 4, y: 6 },
     ];
-    const game = advance(playingGame(snake, "down"));
+    const game = advance(playingGame(snake, "left", "down"));
     expect(game.status).toBe("game over");
     expect(game.snake).toEqual(snake);
   });
@@ -148,6 +155,7 @@ describe("collisions", () => {
           { x: 6, y: 6 },
           { x: 5, y: 6 },
         ],
+        "left",
         "down",
       ),
     );
@@ -162,23 +170,23 @@ describe("collisions", () => {
 });
 
 describe("game over", () => {
-  const over = runUntilOver(queueDirection(createGame(), "right"));
+  const gameOver = runUntilGameOver(queueDirection(createGame(), "right"));
 
   it("stops the snake: ticks do not move it", () => {
-    expect(over.status).toBe("game over");
-    expect(advance(advance(over))).toEqual(over);
+    expect(gameOver.status).toBe("game over");
+    expect(advance(advance(gameOver))).toEqual(gameOver);
   });
 
   it("ignores arrow keys", () => {
-    expect(queueDirection(over, "up")).toEqual(over);
+    expect(queueDirection(gameOver, "up")).toEqual(gameOver);
   });
 });
 
 describe("restart", () => {
   it("gives a fresh starting state after game over", () => {
-    const over = runUntilOver(queueDirection(createGame(), "up"));
-    expect(over.status).toBe("game over");
-    expect(restart(over)).toEqual(createGame());
+    const gameOver = runUntilGameOver(queueDirection(createGame(), "up"));
+    expect(gameOver.status).toBe("game over");
+    expect(restart(gameOver)).toEqual(createGame());
   });
 
   it("does nothing while ready or playing", () => {
