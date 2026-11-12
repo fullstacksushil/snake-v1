@@ -29,8 +29,14 @@ One cell of the snake. The first segment is the head.
 **Direction**:
 Where the snake moves on each tick: up, down, left or right.
 
+**Turn**:
+A change of the snake's direction. At most one turn counts per tick, and a turn that reverses the snake 180° is ignored.
+
 **Tick**:
 One step of the game, every 150 ms, in which the snake moves one cell.
 
 **Status**:
 The game's phase. `ready`: waiting for the first arrow key. `playing`: the snake moves each tick.
+
+**Game**:
+One round of Snake: the snake, its direction and the status.
