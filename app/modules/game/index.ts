@@ -4,8 +4,10 @@ export {
   advance,
   createGame,
   directionForKey,
+  isOver,
   isRestartKey,
+  placeFood,
   queueDirection,
   restart,
 } from "./game";
-export type { Cell, Direction, Game, Status } from "./game";
+export type { Cell, Direction, Game, Random, Status } from "./game";
