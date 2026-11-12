@@ -63,3 +63,7 @@ _Avoid_: Reset, replay
 
 **Game**:
 One round of Snake: the snake, its direction, the food, the score and the status.
+
+**Pages build**:
+The game built as static files with no server, served under a base path such as `/snake-v1/` by GitHub Pages. `npm run build:pages` makes it.
+_Avoid_: SPA build, static export
